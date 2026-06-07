@@ -1,0 +1,117 @@
+@import './theme.css';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+}
+
+.page-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: 16px 16px calc(var(--nav-height) + 16px);
+  min-height: 100vh;
+  position: relative;
+}
+
+.glow-text {
+  color: var(--yellow);
+  text-shadow: var(--glow-yellow);
+}
+
+.glow-btn {
+  background: var(--yellow);
+  color: var(--black);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.glow-btn:hover, .glow-btn:active {
+  box-shadow: var(--glow-yellow);
+  background: var(--yellow-dark);
+}
+
+.glow-btn-outline {
+  background: transparent;
+  color: var(--yellow);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--yellow);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.glow-btn-outline:hover {
+  box-shadow: var(--glow-yellow);
+  background: rgba(255, 215, 0, 0.08);
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--green); }
+  50% { opacity: 0.5; box-shadow: 0 0 10px var(--green); }
+}
+
+@keyframes blink-yellow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: var(--glow-yellow); }
+  50% { text-shadow: var(--glow-yellow-intense); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(5deg); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
