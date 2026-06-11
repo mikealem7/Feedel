@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Feedel International Market</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow: #FFD700; --gold: #C9A227; --black: #0A0A0A;
+    --black2: #111; --black3: #1A1A1A; --black4: #222;
+    --white: #F0F0F0; --gray: #888; --green: #00FF88; --red: #FF4444;
+    --glow: 0 0 10px rgba(255,215,0,.6),0 0 20px rgba(255,215,0,.3);
+    --glow2: 0 0 15px rgba(255,215,0,.9),0 0 35px rgba(255,215,0,.5),0 0 60px rgba(255,215,0,.2);
+    --h: 'Orbitron',monospace; --b: 'Rajdhani',sans-serif;
+  }
+
+  html, body { background: var(--black); color: var(--white); font-family: var(--b); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* Layout */
+  .app { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; overflow: hidden; }
+  .page { display: none; padding: 20px 16px 90px; min-height: 100vh; position: relative; animation: slideUp .3s ease; }
+  .page.active { display: block; }
+
+  /* Bottom Nav */
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; height: 68px; background: #0D0D0D; border-top: 1px solid rgba(255,215,0,.15); display: flex; align-items: center; justify-content: space-around; z-index: 999; }
+  .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 8px 14px; color: var(--gray); font-family: var(--b); transition: color .2s; position: relative; }
+  .nav-btn.active { color: var(--yellow); }
+  .nav-btn .nav-icon { font-size: 22px; }
+  .nav-btn .nav-label { font-family: var(--h); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+  .nav-btn.active .nav-label { text-shadow: var(--glow); }
+  .nav-badge { position: absolute; top: 4px; right: 8px; background: var(--yellow); color: var(--black); font-size: 9px; font-weight: 700; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-family: var(--h); }
+
+  /* Coffee Bean Background */
+  .beans-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 1; }
+  .page-content { position: relative; z-index: 1; }
+
+  /* Typography helpers */
+  .font-h { font-family: var(--h); }
+  .yellow { color: var(--yellow); }
+  .gold { color: var(--gold); }
+  .gray { color: var(--gray); }
+
+  /* Cards */
+  .card { background: var(--black2); border: 1px solid rgba(255,215,0,.1); border-radius: 14px; padding: 16px; }
+  .card-sm { background: var(--black2); border: 1px solid rgba(255,215,0,.08); border-radius: 10px; padding: 12px 14px; }
+
+  /* Buttons */
+  .btn-primary { background: var(--yellow); color: var(--black); border: none; padding: 14px 0; border-radius: 8px; font-family: var(--h); font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; width: 100%; box-shadow: var(--glow); transition: all .2s; }
+  .btn-primary:hover { box-shadow: var(--glow2); }
+  .btn-outline { background: transparent; color: var(--yellow); border: 1px solid var(--yellow); padding: 12px 0; border-radius: 8px; font-family: var(--h); font-size: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all .2s; }
+  .btn-outline:hover { background: rgba(255,215,0,.08); box-shadow: var(--glow); }
+  .btn-ghost { background: rgba(255,215,0,.08); color: var(--yellow); border: 1px solid rgba(255,215,0,.25); padding: 9px 14px; border-radius: 8px; font-family: var(--h); font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: all .2s; }
+
+  /* Input */
+  .input { background: var(--black2); border: 1px solid rgba(255,215,0,.2); color: var(--white); padding: 13px 15px; border-radius: 8px; font-family: var(--b); font-size: 15px; width: 100%; outline: none; transition: border-color .2s, box-shadow .2s; }
+  .input:focus { border-color: rgba(255,215,0,.5); box-shadow: 0 0 0 2px rgba(255,215,0,.1); }
+
+  /* Section label */
+  .sec-label { font-family: var(--h); font-size: 10px; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin: 20px 0 12px; }
+
+  /* Divider */
+  .divider { height: 1px; background: rgba(255,215,0,.1); margin: 12px 0; }
+
+  /* Fresh badge */
+  .fresh-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(0,255,136,.07); border: 1px solid rgba(0,255,136,.3); border-radius: 20px; padding: 3px 10px; font-family: var(--b); font-size: 11px; color: var(--green); }
+  .fresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; animation: blink 1s infinite; }
+  .blink-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); display: inline-block; animation: blink 1s infinite; flex-shrink: 0; }
+
+  /* Product grid */
+  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .product-card { background: var(--black2); border: 1px solid rgba(255,215,0,.1); border-radius: 10px; overflow: hidden; cursor: pointer; transition: border-color .2s, transform .15s; }
+  .product-card:hover { border-color: rgba(255,215,0,.35); transform: translateY(-2px); }
+  .product-card .img-area { background: linear-gradient(135deg,#1a1500,#111); height: 110px; display: flex; align-items: center; justify-content: center; position: relative; font-size: 42px; }
+  .product-card .p-fresh { position: absolute; bottom: 5px; left: 6px; }
+  .product-card .p-wish { position: absolute; top: 5px; right: 6px; background: rgba(0,0,0,.5); border: none; cursor: pointer; font-size: 17px; border-radius: 5px; padding: 3px 5px; }
+  .product-card .p-info { padding: 9px 10px 5px; }
+  .product-card .p-name { font-family: var(--b); font-size: 13px; font-weight: 600; color: var(--white); line-height: 1.3; margin-bottom: 3px; }
+  .product-card .p-price { font-family: var(--h); font-size: 15px; color: var(--yellow); margin-bottom: 0; }
+  .product-card .p-add { margin: 7px 10px 10px; background: rgba(255,215,0,.08); border: 1px solid rgba(255,215,0,.25); color: var(--yellow); font-family: var(--h); font-size: 10px; letter-spacing: .5px; padding: 8px 0; border-radius: 6px; cursor: pointer; width: calc(100% - 20px); transition: all .2s; text-transform: uppercase; }
+  .product-card .p-add:hover { background: rgba(255,215,0,.18); }
+
+  /* Category chips */
+  .chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; font-family: var(--b); font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,215,0,.2); background: var(--black3); color: #ccc; white-space: nowrap; transition: all .2s; }
+  .chip.active { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
+
+  /* Search bar */
+  .search-wrap { display: flex; align-items: center; background: var(--black3); border: 1px solid rgba(255,215,0,.2); border-radius: 8px; padding: 0 12px; margin-bottom: 12px; }
+  .search-wrap input { flex: 1; background: none; border: none; outline: none; color: var(--white); font-family: var(--b); font-size: 15px; padding: 12px 0; }
+  .search-wrap .s-icon { font-size: 14px; margin-right: 8px; opacity: .5; }
+  .search-clear { background: none; border: none; color: var(--gray); font-size: 14px; cursor: pointer; padding: 4px; }
+
+  /* Animations */
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+  @keyframes glowPulse { 0%,100%{text-shadow:var(--glow)} 50%{text-shadow:var(--glow2)} }
+  @keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulseRing { 0%{box-shadow:0 0 0 0 rgba(255,215,0,.4)} 70%{box-shadow:0 0 0 10px rgba(255,215,0,0)} 100%{box-shadow:0 0 0 0 rgba(255,215,0,0)} }
+
+  /* ── HOME PAGE ── */
+  .logo-ring { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--yellow); box-shadow: var(--glow); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 36px; background: rgba(255,215,0,.05); animation: pulseRing 3s infinite; }
+  .logo-title { font-family: var(--h); font-size: 50px; font-weight: 900; color: var(--yellow); letter-spacing: 8px; text-align: center; animation: glowPulse 3s ease-in-out infinite; }
+  .logo-sub { font-family: var(--h); font-size: 11px; color: var(--gold); letter-spacing: 4px; text-align: center; margin-top: 4px; }
+  .logo-tag { font-family: var(--b); font-size: 14px; color: var(--gray); text-align: center; margin-top: 8px; }
+  .logo-line { width: 80px; height: 1px; background: linear-gradient(to right,transparent,var(--yellow),transparent); margin: 18px auto 24px; }
+  .fresh-banner { display: flex; align-items: center; gap: 8px; background: rgba(255,215,0,.05); border: 1px solid rgba(255,215,0,.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 24px; }
+  .fresh-banner span.ft { font-family: var(--b); font-size: 13px; color: var(--yellow); font-weight: 600; }
+  .cat-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .cat-chip { background: var(--black3); border: 1px solid rgba(255,215,0,.2); color: #ccc; font-family: var(--b); font-size: 12px; padding: 7px 14px; border-radius: 20px; cursor: pointer; transition: all .2s; }
+  .cat-chip:hover { border-color: var(--yellow); color: var(--yellow); }
+  .info-card { background: var(--black3); border: 1px solid rgba(201,162,39,.2); border-radius: 10px; padding: 16px; text-align: center; }
+
+  /* ── PREPARED FOODS ── */
+  .pf-card { background: var(--black2); border: 1px solid rgba(255,215,0,.12); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+  .pf-img { background: linear-gradient(135deg,#1a1500,#111); height: 100px; display: flex; align-items: center; justify-content: center; font-size: 52px; position: relative; }
+  .pf-live { position: absolute; top: 8px; right: 10px; display: flex; align-items: center; gap: 5px; background: rgba(0,255,136,.1); border: 1px solid rgba(0,255,136,.3); border-radius: 20px; padding: 3px 10px; font-family: var(--b); font-size: 11px; color: var(--green); }
+  .pf-body { padding: 13px 16px 15px; }
+  .tip-toggle { background: none; border: none; color: var(--gold); font-family: var(--b); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .tip-box { background: rgba(255,215,0,.04); border: 1px solid rgba(255,215,0,.1); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-family: var(--b); font-size: 13px; color: var(--gray); line-height: 1.5; }
+
+  /* ── CART ── */
+  .cart-item { display: flex; align-items: center; gap: 12px; background: var(--black2); border: 1px solid rgba(255,215,0,.08); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+  .cart-emoji { font-size: 32px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,215,0,.05); border-radius: 8px; flex-shrink: 0; }
+  .cart-info { flex: 1; min-width: 0; }
+  .cart-name { font-family: var(--b); font-size: 14px; color: var(--white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 3px; }
+  .cart-price { font-family: var(--h); font-size: 14px; color: var(--yellow); }
+  .qty-ctrl { display: flex; align-items: center; gap: 8px; }
+  .qty-btn { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,215,0,.1); border: 1px solid rgba(255,215,0,.3); color: var(--yellow); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+  .qty-btn:hover { background: rgba(255,215,0,.25); }
+  .qty-num { font-family: var(--h); font-size: 14px; color: var(--white); min-width: 20px; text-align: center; }
+  .remove-btn { background: none; border: none; color: var(--gray); font-size: 16px; cursor: pointer; padding: 4px; }
+  .summary-card { background: var(--black2); border: 1px solid rgba(255,215,0,.1); border-radius: 14px; padding: 16px 18px; margin-bottom: 18px; }
+  .sum-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .sum-lbl { font-family: var(--b); font-size: 15px; color: var(--gray); }
+  .sum-val { font-family: var(--b); font-size: 15px; color: var(--white); font-weight: 600; }
+  .total-lbl { font-family: var(--h); font-size: 15px; color: var(--yellow); letter-spacing: 1px; }
+  .total-val { font-family: var(--h); font-size: 22px; color: var(--yellow); text-shadow: var(--glow); }
+
+  /* ── CHECKOUT ── */
+  .pay-row { display: flex; gap: 12px; margin-bottom: 4px; }
+  .pay-card { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--black2); border: 1px solid rgba(255,215,0,.12); border-radius: 14px; padding: 16px 10px; cursor: pointer; transition: all .2s; }
+  .pay-card.selected { border: 2px solid var(--yellow); box-shadow: var(--glow); background: rgba(255,215,0,.05); }
+  .pay-icon { font-size: 30px; }
+  .pay-lbl { font-family: var(--h); font-size: 11px; color: var(--white); letter-spacing: 1px; text-align: center; }
+  .pay-desc { font-family: var(--b); font-size: 12px; color: var(--gray); text-align: center; }
+  .pickup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .pickup-btn { background: var(--black2); border: 1px solid rgba(255,215,0,.15); color: var(--gray); padding: 11px 0; border-radius: 8px; font-family: var(--h); font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: all .2s; }
+  .pickup-btn.selected { background: rgba(255,215,0,.1); border-color: var(--yellow); color: var(--yellow); box-shadow: var(--glow); }
+  .card-form { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
+  .card-row { display: flex; gap: 12px; }
+
+  /* ── REWARDS ── */
+  .balance-card { background: linear-gradient(135deg,#1a1400,#111); border: 2px solid var(--yellow); border-radius: 16px; padding: 28px 20px; text-align: center; box-shadow: var(--glow); margin-bottom: 16px; }
+  .balance-num { font-family: var(--h); font-size: 58px; color: var(--yellow); text-shadow: var(--glow2); line-height: 1; margin: 8px 0; }
+  .balance-sub { font-family: var(--b); font-size: 13px; color: var(--gray); }
+  .tier-card { display: flex; align-items: center; gap: 14px; background: var(--black2); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; }
+  .tier-icon { font-size: 38px; flex-shrink: 0; }
+  .tier-info { flex: 1; }
+  .tier-name { font-family: var(--h); font-size: 15px; letter-spacing: 1px; margin-bottom: 3px; }
+  .tier-sub { font-family: var(--b); font-size: 13px; color: var(--gray); margin-bottom: 8px; }
+  .progress-bar { height: 6px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+  .tiers-row { display: flex; gap: 10px; margin-bottom: 22px; }
+  .tier-badge { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--black2); border: 1px solid rgba(255,255,255,.05); border-radius: 10px; padding: 12px 6px; transition: opacity .3s; }
+  .tier-badge-name { font-family: var(--h); font-size: 10px; letter-spacing: 1px; }
+  .tier-badge-range { font-family: var(--b); font-size: 10px; color: var(--gray); }
+  .redeem-card { background: var(--black2); border: 1px solid rgba(255,215,0,.15); border-radius: 14px; padding: 16px 18px; margin-bottom: 22px; }
+  .redeem-row { display: flex; gap: 10px; }
+  .history-row { display: flex; justify-content: space-between; align-items: center; background: var(--black2); border: 1px solid rgba(255,255,255,.04); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+
+  /* ── ACCOUNT ── */
+  .profile-card { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg,#1a1400,#111); border: 1px solid rgba(255,215,0,.2); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+  .avatar { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,215,0,.1); border: 2px solid var(--yellow); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+  .profile-info { flex: 1; }
+  .profile-name { font-family: var(--h); font-size: 15px; color: var(--white); letter-spacing: .5px; margin-bottom: 3px; }
+  .profile-email { font-family: var(--b); font-size: 13px; color: var(--gray); margin-bottom: 6px; }
+  .tier-pill { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,215,0,.08); border: 1px solid rgba(255,215,0,.2); border-radius: 12px; padding: 3px 9px; font-family: var(--b); font-size: 12px; color: var(--gold); font-weight: 600; }
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 26px; }
+  .quick-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; background: var(--black2); border: 1px solid rgba(255,215,0,.1); border-radius: 10px; padding: 12px 0; cursor: pointer; font-family: var(--b); font-size: 11px; color: var(--gray); transition: all .2s; }
+  .quick-btn:hover { border-color: rgba(255,215,0,.35); color: var(--yellow); }
+  .order-card { background: var(--black2); border: 1px solid rgba(255,215,0,.08); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+  .order-hdr { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .order-id { font-family: var(--h); font-size: 12px; color: var(--yellow); letter-spacing: 1px; }
+  .order-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .order-total { font-family: var(--h); font-size: 16px; color: var(--yellow); }
+
+  /* ── LOGIN ── */
+  .toggle-row { display: flex; background: var(--black2); border: 1px solid rgba(255,215,0,.15); border-radius: 8px; padding: 4px; margin-bottom: 22px; gap: 4px; }
+  .toggle-btn { flex: 1; background: none; border: none; color: var(--gray); padding: 10px 0; border-radius: 6px; font-family: var(--h); font-size: 12px; cursor: pointer; letter-spacing: 1px; transition: all .2s; }
+  .toggle-btn.active { background: var(--yellow); color: var(--black); box-shadow: var(--glow); }
+
+  /* ── SUCCESS ── */
+  .success-ring { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--yellow); box-shadow: var(--glow2); display: flex; align-items: center; justify-content: center; font-size: 42px; color: var(--yellow); margin: 0 auto 18px; }
+  .success-center { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center; }
+
+  /* Back button */
+  .back-btn { background: none; border: 1px solid rgba(255,215,0,.2); color: var(--yellow); padding: 8px 15px; border-radius: 8px; font-family: var(--h); font-size: 11px; cursor: pointer; letter-spacing: 1px; margin-bottom: 18px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--black2); } ::-webkit-scrollbar-thumb { background: rgba(255,215,0,.2); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Coffee Bean SVG Background -->
+  <svg class="beans-bg" viewBox="0 0 430 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.06">
+      <ellipse cx="40" cy="80" rx="14" ry="22" fill="#C9A227" transform="rotate(30 40 80)"/>
+      <line x1="40" y1="58" x2="40" y2="102" stroke="#0A0A0A" stroke-width="1.5" transform="rotate(30 40 80)"/>
+      <ellipse cx="390" cy="150" rx="11" ry="18" fill="#C9A227" transform="rotate(-20 390 150)"/>
+      <line x1="390" y1="132" x2="390" y2="168" stroke="#0A0A0A" stroke-width="1.2" transform="rotate(-20 390 150)"/>
+      <ellipse cx="70" cy="300" rx="18" ry="28" fill="#C9A227" transform="rotate(50 70 300)"/>
+      <line x1="70" y1="272" x2="70" y2="328" stroke="#0A0A0A" stroke-width="1.8" transform="rotate(50 70 300)"/>
+      <ellipse cx="370" cy="400" rx="10" ry="16" fill="#C9A227" transform="rotate(-40 370 400)"/>
+      <line x1="370" y1="384" x2="370" y2="416" stroke="#0A0A0A" stroke-width="1.2" transform="rotate(-40 370 400)"/>
+      <ellipse cx="200" cy="60" rx="16" ry="25" fill="#C9A227" transform="rotate(10 200 60)"/>
+      <line x1="200" y1="35" x2="200" y2="85" stroke="#0A0A0A" stroke-width="1.6" transform="rotate(10 200 60)"/>
+      <ellipse cx="350" cy="600" rx="20" ry="32" fill="#C9A227" transform="rotate(60 350 600)"/>
+      <line x1="350" y1="568" x2="350" y2="632" stroke="#0A0A0A" stroke-width="2" transform="rotate(60 350 600)"/>
+      <ellipse cx="30" cy="550" rx="12" ry="20" fill="#C9A227" transform="rotate(-15 30 550)"/>
+      <line x1="30" y1="530" x2="30" y2="570" stroke="#0A0A0A" stroke-width="1.3" transform="rotate(-15 30 550)"/>
+      <ellipse cx="410" cy="750" rx="15" ry="24" fill="#C9A227" transform="rotate(35 410 750)"/>
+      <line x1="410" y1="726" x2="410" y2="774" stroke="#0A0A0A" stroke-width="1.5" transform="rotate(35 410 750)"/>
+      <ellipse cx="100" cy="700" rx="9" ry="15" fill="#C9A227" transform="rotate(-55 100 700)"/>
+      <line x1="100" y1="685" x2="100" y2="715" stroke="#0A0A0A" stroke-width="1.1" transform="rotate(-55 100 700)"/>
+      <ellipse cx="250" cy="850" rx="22" ry="35" fill="#C9A227" transform="rotate(25 250 850)"/>
+      <line x1="250" y1="815" x2="250" y2="885" stroke="#0A0A0A" stroke-width="2.2" transform="rotate(25 250 850)"/>
+    </g>
+  </svg>
+
+  <!-- ════════════ HOME PAGE ════════════ -->
+  <div id="page-home" class="page active">
+    <div class="page-content">
+      <div style="text-align:center;padding-top:24px;margin-bottom:28px">
+        <div class="logo-ring">☕</div>
+        <div class="logo-title">FEEDEL</div>
+        <div class="logo-sub">International Market</div>
+        <div class="logo-tag">Ethiopian Roots · Global Flavors</div>
+        <div class="logo-line"></div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:18px">
+        <button class="btn-primary" style="flex:1" onclick="goTo('shop')">Browse Market</button>
+        <button class="btn-outline" style="flex:1" onclick="goTo('prepared')">🍽️ Today's Kitchen</button>
+      </div>
+
+      <div class="fresh-banner">
+        <span class="blink-dot"></span>
+        <span class="ft">Injera &amp; Prepared Foods Made Fresh Daily</span>
+      </div>
+
+      <div class="sec-label">Shop by Category</div>
+      <div class="cat-grid" id="cat-grid"></div>
+
+      <div class="info-card">
+        <div style="font-family:var(--h);font-size:13px;color:var(--yellow);margin-bottom:8px;letter-spacing:1px">📍 Visit Us</div>
+        <div style="font-family:var(--b);font-size:14px;color:var(--gray);line-height:1.8">
+          Feedel International Market<br>
+          Open Mon–Sat · 8am–9pm<br>
+          Sunday · 10am–7pm
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SHOP PAGE ════════════ -->
+  <div id="page-shop" class="page">
+    <div class="page-content">
+      <div style="font-family:var(--h);font-size:20px;color:var(--yellow);text-shadow:var(--glow);letter-spacing:3px;margin-bottom:14px">MARKET</div>
+
+      <div class="fresh-banner" style="margin-bottom:12px">
+        <span class="blink-dot"></span>
+        <span class="ft">Injera &amp; Prepared Foods Made Fresh Daily</span>
+      </div>
+
+      <div class="search-wrap">
+        <span class="s-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Search products…" oninput="filterProducts()">
+        <button class="search-clear" onclick="clearSearch()">✕</button>
+      </div>
+
+      <div class="chip-row" id="filter-chips" style="margin-bottom:12px"></div>
+
+      <div style="font-family:var(--b);font-size:12px;color:var(--gray);margin-bottom:12px" id="results-count"></div>
+
+      <div class="product-grid" id="product-grid"></div>
+
+      <div id="no-results" style="display:none;text-align:center;padding:40px 0">
+        <div style="font-family:var(--b);font-size:16px;color:var(--gray);margin-bottom:14px">No products found</div>
+        <button class="btn-ghost" onclick="clearSearch();setActiveCategory(null)">Clear Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ PREPARED FOODS PAGE ════════════ -->
+  <div id="page-prepared" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="goTo('shop')">← Back</button>
+
+      <div style="text-align:center;margin-bottom:26px">
+        <div style="font-family:var(--h);font-size:28px;color:var(--yellow);text-shadow:var(--glow2);letter-spacing:4px;margin-bottom:5px">Kitchen Fresh</div>
+        <div style="font-family:var(--b);font-size:15px;color:var(--gray);margin-bottom:14px">Made Every Morning · Served Daily</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:20px;padding:8px 16px">
+          <span class="fresh-dot"></span>
+          <span style="font-family:var(--b);font-size:13px;color:var(--green);font-weight:600">All items prepared fresh each day</span>
+        </div>
+      </div>
+
+      <div id="prepared-list"></div>
+
+      <div style="background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.15);border-radius:14px;padding:16px 18px;margin-top:8px">
+        <div style="font-family:var(--h);font-size:12px;color:var(--yellow);margin-bottom:8px;letter-spacing:1px">🕐 Freshness Guarantee</div>
+        <div style="font-family:var(--b);font-size:14px;color:var(--gray);line-height:1.6">All prepared foods are made fresh each morning. Orders placed before 8am are ready for same-day pickup. Items sell out daily — order early!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ PRODUCT DETAIL PAGE ════════════ -->
+  <div id="page-product" class="page">
+    <div class="page-content">
+      <button class="back-btn" id="product-back">← Back</button>
+      <div id="product-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ════════════ CART PAGE ════════════ -->
+  <div id="page-cart" class="page">
+    <div class="page-content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+        <button class="back-btn" style="margin-bottom:0" onclick="goTo('shop')">← Back</button>
+        <div style="font-family:var(--h);font-size:20px;color:var(--yellow);text-shadow:var(--glow)">Cart</div>
+        <div style="width:60px"></div>
+      </div>
+      <div id="cart-content"></div>
+    </div>
+  </div>
+
+  <!-- ════════════ CHECKOUT PAGE ════════════ -->
+  <div id="page-checkout" class="page">
+    <div class="page-content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+        <button class="back-btn" style="margin-bottom:0" onclick="goTo('cart')">← Back</button>
+        <div style="font-family:var(--h);font-size:20px;color:var(--yellow)">Checkout</div>
+        <div style="width:60px"></div>
+      </div>
+      <div id="checkout-content"></div>
+    </div>
+  </div>
+
+  <!-- ════════════ REWARDS PAGE ════════════ -->
+  <div id="page-rewards" class="page">
+    <div class="page-content">
+      <div style="font-family:var(--h);font-size:26px;color:var(--yellow);text-shadow:var(--glow);letter-spacing:4px;margin-bottom:22px">Rewards</div>
+      <div id="rewards-content"></div>
+    </div>
+  </div>
+
+  <!-- ════════════ ACCOUNT PAGE ════════════ -->
+  <div id="page-account" class="page">
+    <div class="page-content" id="account-content"></div>
+  </div>
+
+  <!-- ════════════ LOGIN PAGE ════════════ -->
+  <div id="page-login" class="page">
+    <div class="page-content">
+      <div style="text-align:center;margin-bottom:30px;padding-top:20px">
+        <div class="logo-ring" style="width:64px;height:64px;font-size:28px">☕</div>
+        <div style="font-family:var(--h);font-size:34px;color:var(--yellow);text-shadow:var(--glow2);letter-spacing:5px;margin-top:10px">FEEDEL</div>
+        <div style="font-family:var(--h);font-size:10px;color:var(--gold);letter-spacing:3px;margin-top:4px">International Market</div>
+      </div>
+
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="login-toggle" onclick="setLoginMode('login')">Login</button>
+        <button class="toggle-btn" id="signup-toggle" onclick="setLoginMode('signup')">Sign Up</button>
+      </div>
+
+      <div id="login-form">
+        <div id="signup-name-wrap" style="display:none;margin-bottom:12px">
+          <input class="input" type="text" id="signup-name" placeholder="Full Name">
+        </div>
+        <div style="margin-bottom:12px">
+          <input class="input" type="email" id="login-email" placeholder="Email Address">
+        </div>
+        <div style="margin-bottom:16px">
+          <input class="input" type="password" id="login-password" placeholder="Password">
+        </div>
+        <div id="login-error" style="font-family:var(--b);font-size:13px;color:var(--red);margin-bottom:12px;display:none"></div>
+        <button class="btn-primary" onclick="handleLogin()">Login →</button>
+      </div>
+
+      <div style="background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.1);border-radius:14px;padding:16px 18px;margin-top:22px">
+        <div style="font-family:var(--h);font-size:11px;color:var(--gold);margin-bottom:10px;letter-spacing:1px">🌟 Member Perks</div>
+        <div style="font-family:var(--b);font-size:14px;color:var(--gray);line-height:1.9">
+          • Earn 1 point per $1 spent<br>
+          • Exclusive member deals<br>
+          • Order history &amp; easy reorder<br>
+          • Save your favorites
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ BOTTOM NAV ════════════ -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="goTo('home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" id="nav-shop" onclick="goTo('shop')">
+      <span class="nav-icon">🛍️</span>
+      <span class="nav-label">Shop</span>
+      <span class="nav-badge" id="cart-badge" style="display:none">0</span>
+    </button>
+    <button class="nav-btn" id="nav-rewards" onclick="goTo('rewards')">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-label">Rewards</span>
+    </button>
+    <button class="nav-btn" id="nav-account" onclick="goTo('account')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Account</span>
+    </button>
+  </nav>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════
+const CATEGORIES = [
+  'Ethiopian Coffee','Traditional Foods','Fresh Breads & Injera',
+  'Church & Art','Traditional Clothing','Cooking Equipment',
+  'Hair Products','Jewelry','Fresh Meat','Prepared Foods','Spices & Ingredients'
+];
+
+const PRODUCTS = [
+  { id:'c1', name:'Yirgacheffe Whole Bean Coffee', cat:'Ethiopian Coffee', price:18.99, emoji:'☕', desc:'Single-origin Yirgacheffe beans with bright floral notes and citrus finish. Light roast, 12oz bag.', fresh:false },
+  { id:'c2', name:'Sidama Dark Roast', cat:'Ethiopian Coffee', price:16.99, emoji:'☕', desc:'Bold Sidama dark roast with chocolate and berry undertones. 12oz.', fresh:false },
+  { id:'c3', name:'Harrar Ground Coffee', cat:'Ethiopian Coffee', price:14.99, emoji:'☕', desc:'Classic Harrar ground coffee with wine-like complexity. Perfect for macchiato. 8oz.', fresh:false },
+  { id:'c4', name:'Ethiopian Coffee Ceremony Kit', cat:'Ethiopian Coffee', price:34.99, emoji:'🫖', desc:'Traditional jebena pot, 3 finjal cups, and incense. Complete ceremony set.', fresh:false },
+  { id:'tf1', name:'Berbere Spice Blend', cat:'Traditional Foods', price:7.99, emoji:'🌶️', desc:'Authentic Ethiopian berbere — chili, korarima, rue, ajwain and more. 6oz.', fresh:false },
+  { id:'tf2', name:'Niter Kibbeh (Spiced Butter)', cat:'Traditional Foods', price:9.99, emoji:'🧈', desc:'Clarified butter infused with onion, garlic, ginger, and spices. 8oz jar.', fresh:false },
+  { id:'tf3', name:'Shiro Powder', cat:'Traditional Foods', price:6.49, emoji:'🟡', desc:'Ground chickpea flour blend for making shiro stew. 1 lb.', fresh:false },
+  { id:'tf4', name:'Tej Honey Wine', cat:'Traditional Foods', price:19.99, emoji:'🍯', desc:'Traditional Ethiopian honey mead (tej). 500ml bottle.', fresh:false },
+  { id:'ij1', name:'Fresh Injera (5-pack)', cat:'Fresh Breads & Injera', price:8.99, emoji:'🫓', desc:'Freshly made teff injera, soft and tangy. Made daily in-house.', fresh:true },
+  { id:'ij2', name:'White Injera (3-pack)', cat:'Fresh Breads & Injera', price:5.99, emoji:'🫓', desc:'Lighter injera made with barley flour. Great for kids.', fresh:true },
+  { id:'ij3', name:'Dabo (Ethiopian Bread)', cat:'Fresh Breads & Injera', price:4.99, emoji:'🍞', desc:'Soft sweet Ethiopian bread, baked fresh daily. Whole loaf.', fresh:true },
+  { id:'ca1', name:'Ethiopian Orthodox Cross', cat:'Church & Art', price:29.99, emoji:'✝️', desc:'Hand-carved wooden Ethiopian cross with intricate latticework. 8 inches.', fresh:false },
+  { id:'ca2', name:'Lalibela Art Print', cat:'Church & Art', price:24.99, emoji:'🖼️', desc:'Detailed illustration of the rock-hewn churches of Lalibela. 11×14 print.', fresh:false },
+  { id:'ca3', name:'Ethiopian Incense & Burner', cat:'Church & Art', price:12.99, emoji:'🪔', desc:'Traditional etan incense sticks with clay incense burner set.', fresh:false },
+  { id:'tc1', name:'Habesha Kemis (White)', cat:'Traditional Clothing', price:59.99, emoji:'👗', desc:'Traditional Ethiopian white dress with embroidered border (tibeb). One size.', fresh:false },
+  { id:'tc2', name:'Netela Scarf', cat:'Traditional Clothing', price:22.99, emoji:'🧣', desc:'Lightweight cotton shawl with decorative border, worn for church and ceremonies.', fresh:false },
+  { id:'tc3', name:'Gabi (Thick Cotton Wrap)', cat:'Traditional Clothing', price:44.99, emoji:'🧥', desc:'Double-layered handwoven cotton wrap for warmth. Traditional highland attire.', fresh:false },
+  { id:'ce1', name:'Mitad (Injera Griddle)', cat:'Cooking Equipment', price:79.99, emoji:'🍳', desc:'Electric injera-making griddle with non-stick surface. 20-inch diameter.', fresh:false },
+  { id:'ce2', name:'Clay Cooking Pot (Disti)', cat:'Cooking Equipment', price:34.99, emoji:'🏺', desc:'Traditional Ethiopian clay pot for slow-cooking stews. 4 quart.', fresh:false },
+  { id:'ce3', name:'Wooden Mesob Basket Table', cat:'Cooking Equipment', price:49.99, emoji:'🧺', desc:'Handwoven grass basket table for serving injera and wot. Traditional dining.', fresh:false },
+  { id:'hp1', name:'Argan Oil Hair Serum', cat:'Hair Products', price:14.99, emoji:'💆', desc:'Pure Moroccan argan oil for natural hair. Reduces frizz and adds shine. 4oz.', fresh:false },
+  { id:'hp2', name:'Shea Butter Curl Cream', cat:'Hair Products', price:11.99, emoji:'💆', desc:'Raw shea butter cream for curly and coily hair types. 8oz.', fresh:false },
+  { id:'hp3', name:'Black Castor Oil', cat:'Hair Products', price:9.99, emoji:'💆', desc:'Jamaican black castor oil for hair growth and scalp health. 4oz.', fresh:false },
+  { id:'jw1', name:'Ethiopian Cross Necklace (Gold)', cat:'Jewelry', price:39.99, emoji:'📿', desc:'Gold-plated Ethiopian Lalibela cross pendant with 18-inch chain.', fresh:false },
+  { id:'jw2', name:'Habesha Bracelet Set', cat:'Jewelry', price:24.99, emoji:'📿', desc:'Set of 3 gold-tone filigree bangles in traditional Ethiopian style.', fresh:false },
+  { id:'fm1', name:'Halal Lamb (1 lb)', cat:'Fresh Meat', price:12.99, emoji:'🥩', desc:'Fresh halal-certified lamb, cut to order. Perfect for tibs and stew.', fresh:true },
+  { id:'fm2', name:'Halal Beef Cubes (1 lb)', cat:'Fresh Meat', price:10.99, emoji:'🥩', desc:'Fresh halal beef, cubed for tibs or ground for kitfo.', fresh:true },
+  { id:'pf1', name:'Scrambled Eggs (Enqulal Tibs)', cat:'Prepared Foods', price:6.99, emoji:'🍳', desc:'Ethiopian-style scrambled eggs with onions, jalapeños, and berbere spice.', fresh:true, tip:'Best enjoyed with fresh injera. Add a side of avocado for extra richness.' },
+  { id:'pf2', name:'Fried Chicken', cat:'Prepared Foods', price:9.99, emoji:'🍗', desc:'Crispy fried chicken seasoned with Ethiopian spice blend. 2 pieces.', fresh:true, tip:'Pair with our house hot sauce and yellow rice for a complete meal.' },
+  { id:'pf3', name:'Yellow Rice', cat:'Prepared Foods', price:4.99, emoji:'🍚', desc:'Fragrant turmeric rice cooked with vegetables and Ethiopian spices.', fresh:true, tip:'Great side dish. Pairs well with any protein or stew.' },
+  { id:'pf4', name:'Busavan (Spicy Stew)', cat:'Prepared Foods', price:8.99, emoji:'🍲', desc:'Rich and spicy meat stew slow-cooked with berbere and vegetables.', fresh:true, tip:'Serve over injera and let it soak for 2 minutes before eating.' },
+  { id:'pf5', name:'Sambosa (6-pack)', cat:'Prepared Foods', price:7.99, emoji:'🥟', desc:'Crispy pastry triangles filled with spiced lentils or meat. 6 pieces.', fresh:true, tip:'Dip in our house awaze sauce. Best eaten hot within 30 minutes.' },
+  { id:'si1', name:'Mitmita Spice', cat:'Spices & Ingredients', price:5.99, emoji:'🌶️', desc:"Intensely hot Ethiopian spice blend of bird's eye chili and cardamom. 2oz.", fresh:false },
+  { id:'si2', name:'Korarima (Ethiopian Cardamom)', cat:'Spices & Ingredients', price:8.99, emoji:'🌿', desc:'Whole Ethiopian cardamom pods. Sweeter and more complex than green cardamom. 2oz.', fresh:false },
+  { id:'si3', name:'Teff Flour (2 lb)', cat:'Spices & Ingredients', price:9.49, emoji:'🌾', desc:'Whole grain teff flour for making injera or gluten-friendly baking. 2 lbs.', fresh:false },
+];
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let cart = {};           // { productId: quantity }
+let wishlist = new Set();
+let points = 157;
+let pointsHistory = [
+  { id:'h1', date:'2026-06-01', desc:'Purchase — $24.50', pts:24 },
+  { id:'h2', date:'2026-05-28', desc:'Purchase — $68.00', pts:68 },
+  { id:'h3', date:'2026-05-20', desc:'Purchase — $15.99', pts:15 },
+  { id:'h4', date:'2026-05-10', desc:'Sign-up Bonus', pts:50 },
+];
+let orders = [
+  { id:'ORD-001', date:'2026-06-01', total:45.97, status:'Delivered', items:'Fresh Injera · Berbere Spice · Scrambled Eggs' },
+  { id:'ORD-002', date:'2026-05-28', total:89.98, status:'Delivered', items:'Habesha Kemis · Ethiopian Cross Necklace' },
+  { id:'ORD-003', date:'2026-06-07', total:23.97, status:'Ready for Pickup', items:'Fried Chicken · Yellow Rice · Sambosa' },
+];
+let currentUser = null;
+let loginMode = 'login';
+let activeCategory = null;
+let searchQuery = '';
+let currentPage = 'home';
+let prevPage = 'shop';
+let payMethod = 'cash';
+let pickupTime = '30 min';
+let openTip = null;
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function goTo(page) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // Show target
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  currentPage = page;
+
+  // Nav active states
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (page === 'home') document.getElementById('nav-home').classList.add('active');
+  if (page === 'shop' || page === 'prepared' || page === 'product') document.getElementById('nav-shop').classList.add('active');
+  if (page === 'rewards') document.getElementById('nav-rewards').classList.add('active');
+  if (page === 'account' || page === 'login') document.getElementById('nav-account').classList.add('active');
+
+  // Render dynamic pages
+  if (page === 'shop') renderShop();
+  if (page === 'prepared') renderPrepared();
+  if (page === 'cart') renderCart();
+  if (page === 'checkout') renderCheckout();
+  if (page === 'rewards') renderRewards();
+  if (page === 'account') renderAccount();
+
+  // Scroll to top
+  window.scrollTo(0, 0);
+}
+
+function showProduct(id) {
+  prevPage = currentPage;
+  document.getElementById('product-back').onclick = () => goTo(prevPage === 'home' ? 'shop' : prevPage);
+  renderProductDetail(id);
+  goTo('product');
+}
+
+// ═══════════════════════════════════════════════════
+// CART HELPERS
+// ═══════════════════════════════════════════════════
+function cartTotal() {
+  return Object.entries(cart).reduce((s, [id, qty]) => {
+    const p = PRODUCTS.find(x => x.id === id);
+    return s + (p ? p.price * qty : 0);
+  }, 0);
+}
+function cartCount() {
+  return Object.values(cart).reduce((s, q) => s + q, 0);
+}
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  updateCartBadge();
+}
+function removeFromCart(id) {
+  delete cart[id];
+  updateCartBadge();
+}
+function updateQty(id, delta) {
+  cart[id] = (cart[id] || 0) + delta;
+  if (cart[id] <= 0) delete cart[id];
+  updateCartBadge();
+  renderCart();
+}
+function updateCartBadge() {
+  const badge = document.getElementById('cart-badge');
+  const n = cartCount();
+  if (n > 0) { badge.style.display = 'flex'; badge.textContent = n; }
+  else badge.style.display = 'none';
+}
+function getTier(p) {
+  if (p >= 1000) return { name:'Gold', color:'#FFD700', icon:'🥇', min:1000, max:Infinity, next:null };
+  if (p >= 500) return { name:'Silver', color:'#C0C0C0', icon:'🥈', min:500, max:999, next:1000 };
+  return { name:'Bronze', color:'#CD7F32', icon:'🥉', min:0, max:499, next:500 };
+}
+
+// ═══════════════════════════════════════════════════
+// HOME — init category grid
+// ═══════════════════════════════════════════════════
+function initHome() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = CATEGORIES.map(c => `
+    <button class="cat-chip" onclick="activeCategory='${c}';goTo('shop')">${c}</button>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// SHOP
+// ═══════════════════════════════════════════════════
+function initShopFilters() {
+  const row = document.getElementById('filter-chips');
+  row.innerHTML = `<button class="chip ${!activeCategory?'active':''}" onclick="setActiveCategory(null)">All</button>` +
+    CATEGORIES.map(c => `<button class="chip ${activeCategory===c?'active':''}" onclick="setActiveCategory('${c}')">${c}</button>`).join('');
+}
+function setActiveCategory(cat) {
+  activeCategory = cat;
+  initShopFilters();
+  filterProducts();
+}
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  searchQuery = '';
+  filterProducts();
+}
+function filterProducts() {
+  searchQuery = document.getElementById('search-input').value.toLowerCase();
+  const filtered = PRODUCTS.filter(p => {
+    const matchCat = !activeCategory || p.cat === activeCategory;
+    const matchSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery) || p.cat.toLowerCase().includes(searchQuery);
+    return matchCat && matchSearch;
+  });
+  document.getElementById('results-count').textContent = filtered.length + ' products';
+  const grid = document.getElementById('product-grid');
+  const noRes = document.getElementById('no-results');
+  if (filtered.length === 0) { grid.innerHTML = ''; noRes.style.display = 'block'; return; }
+  noRes.style.display = 'none';
+  grid.innerHTML = filtered.map(p => productCardHTML(p)).join('');
+}
+function renderShop() {
+  initShopFilters();
+  filterProducts();
+}
+function productCardHTML(p) {
+  const w = wishlist.has(p.id);
+  return `<div class="product-card">
+    <div class="img-area" onclick="showProduct('${p.id}')">
+      <span>${p.emoji}</span>
+      ${p.fresh ? `<span class="p-fresh fresh-badge" style="font-size:10px"><span class="fresh-dot"></span>FRESH</span>` : ''}
+      <button class="p-wish" onclick="event.stopPropagation();toggleWish('${p.id}')">${w?'❤️':'🤍'}</button>
+    </div>
+    <div class="p-info" onclick="showProduct('${p.id}')">
+      <div class="p-name">${p.name}</div>
+      <div class="p-price">$${p.price.toFixed(2)}</div>
+    </div>
+    <button class="p-add" onclick="addToCart('${p.id}');showAddedFeedback(this)">+ Add to Cart</button>
+  </div>`;
+}
+function showAddedFeedback(btn) {
+  btn.textContent = '✓ Added!';
+  btn.style.background = 'rgba(0,255,136,.15)';
+  btn.style.borderColor = 'rgba(0,255,136,.4)';
+  btn.style.color = 'var(--green)';
+  setTimeout(() => {
+    btn.textContent = '+ Add to Cart';
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }, 1200);
+}
+function toggleWish(id) {
+  if (wishlist.has(id)) wishlist.delete(id);
+  else wishlist.add(id);
+  filterProducts();
+}
+
+// ═══════════════════════════════════════════════════
+// PREPARED FOODS
+// ═══════════════════════════════════════════════════
+function renderPrepared() {
+  const prepared = PRODUCTS.filter(p => p.cat === 'Prepared Foods');
+  document.getElementById('prepared-list').innerHTML = prepared.map(p => `
+    <div class="pf-card">
+      <div class="pf-img">
+        <span>${p.emoji}</span>
+        <div class="pf-live"><span class="fresh-dot"></span>Made Today</div>
+      </div>
+      <div class="pf-body">
+        <div style="font-family:var(--h);font-size:16px;color:var(--white);margin-bottom:5px">${p.name}</div>
+        <div style="font-family:var(--b);font-size:14px;color:var(--gray);margin-bottom:7px;line-height:1.5">${p.desc}</div>
+        <div style="font-family:var(--h);font-size:22px;color:var(--yellow);text-shadow:var(--glow);margin-bottom:10px">$${p.price.toFixed(2)}</div>
+        ${p.tip ? `
+          <button class="tip-toggle" onclick="toggleTip('${p.id}')">
+            💡 <span id="tip-label-${p.id}">Serving Tip ▼</span>
+          </button>
+          <div id="tip-box-${p.id}" class="tip-box" style="display:none">${p.tip}</div>
+        ` : ''}
+        <button class="btn-primary" onclick="addToCart('${p.id}');goTo('cart')">Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleTip(id) {
+  const box = document.getElementById('tip-box-' + id);
+  const lbl = document.getElementById('tip-label-' + id);
+  if (box.style.display === 'none') {
+    box.style.display = 'block';
+    lbl.textContent = 'Hide Tip ▲';
+  } else {
+    box.style.display = 'none';
+    lbl.textContent = 'Serving Tip ▼';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// PRODUCT DETAIL
+// ═══════════════════════════════════════════════════
+function renderProductDetail(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) { document.getElementById('product-detail-content').innerHTML = '<p style="color:var(--gray)">Product not found.</p>'; return; }
+  const w = wishlist.has(p.id);
+  document.getElementById('product-detail-content').innerHTML = `
+    <div style="background:linear-gradient(135deg,#1a1500,#111);border:1px solid rgba(255,215,0,.15);border-radius:14px;height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:18px">
+      <span style="font-size:80px">${p.emoji}</span>
+      ${p.fresh ? `<div class="fresh-badge" style="position:absolute;bottom:12px">
+        <span class="fresh-dot"></span>Made Fresh Daily
+      </div>` : ''}
+    </div>
+    <div class="card">
+      <div style="display:inline-block;background:rgba(255,215,0,.1);color:var(--yellow);font-family:var(--h);font-size:10px;letter-spacing:2px;padding:4px 10px;border-radius:20px;margin-bottom:10px;text-transform:uppercase">${p.cat}</div>
+      <div style="font-family:var(--h);font-size:19px;color:var(--white);margin-bottom:7px;line-height:1.3">${p.name}</div>
+      <div style="font-family:var(--h);font-size:28px;color:var(--yellow);text-shadow:var(--glow);margin-bottom:14px">$${p.price.toFixed(2)}</div>
+      <div style="font-family:var(--b);font-size:15px;color:var(--gray);line-height:1.6;margin-bottom:16px">${p.desc}</div>
+      ${p.tip ? `<div style="background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.15);border-radius:8px;padding:12px 14px;margin-bottom:18px">
+        <div style="font-family:var(--h);font-size:11px;color:var(--gold);margin-bottom:5px;letter-spacing:1px">💡 Serving Tip</div>
+        <div style="font-family:var(--b);font-size:14px;color:var(--gray);line-height:1.5">${p.tip}</div>
+      </div>` : ''}
+      <div style="display:flex;gap:12px">
+        <button id="wish-detail-${id}" class="btn-ghost" onclick="toggleWishDetail('${id}')" style="color:${w?'var(--yellow)':'var(--gray)'}">
+          ${w?'❤️ Saved':'🤍 Wishlist'}
+        </button>
+        <button class="btn-primary" style="flex:1" id="add-detail-${id}" onclick="addToCartDetail('${id}')">Add to Cart</button>
+      </div>
+    </div>
+  `;
+}
+function toggleWishDetail(id) {
+  if (wishlist.has(id)) wishlist.delete(id);
+  else wishlist.add(id);
+  const w = wishlist.has(id);
+  const btn = document.getElementById('wish-detail-' + id);
+  if (btn) { btn.textContent = w ? '❤️ Saved' : '🤍 Wishlist'; btn.style.color = w ? 'var(--yellow)' : 'var(--gray)'; }
+}
+function addToCartDetail(id) {
+  addToCart(id);
+  const btn = document.getElementById('add-detail-' + id);
+  if (btn) {
+    const orig = btn.style.background;
+    btn.textContent = '✓ Added!';
+    btn.style.background = '#00FF88';
+    setTimeout(() => { btn.textContent = 'Add to Cart'; btn.style.background = orig; }, 1200);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// CART
+// ═══════════════════════════════════════════════════
+function renderCart() {
+  const el = document.getElementById('cart-content');
+  const items = Object.entries(cart);
+  if (items.length === 0) {
+    el.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:14px">
+      <span style="font-size:64px">🛒</span>
+      <div style="font-family:var(--b);font-size:17px;color:var(--gray)">Your cart is empty</div>
+      <button class="btn-primary" style="width:auto;padding:13px 32px" onclick="goTo('shop')">Browse Market</button>
+    </div>`;
+    return;
+  }
+  const subtotal = cartTotal();
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+  el.innerHTML = items.map(([id, qty]) => {
+    const p = PRODUCTS.find(x => x.id === id);
+    if (!p) return '';
+    return `<div class="cart-item">
+      <div class="cart-emoji">${p.emoji}</div>
+      <div class="cart-info">
+        <div class="cart-name">${p.name}</div>
+        <div class="cart-price">$${(p.price * qty).toFixed(2)}</div>
+        ${p.fresh ? `<div style="margin-top:3px"><span class="fresh-badge" style="font-size:10px"><span class="fresh-dot"></span>Fresh Daily</span></div>` : ''}
+      </div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="updateQty('${id}',-1)">−</button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" onclick="updateQty('${id}',1)">+</button>
+      </div>
+      <button class="remove-btn" onclick="removeFromCart('${id}');renderCart()">✕</button>
+    </div>`;
+  }).join('') + `
+  <div class="summary-card">
+    <div class="sum-row"><span class="sum-lbl">Subtotal</span><span class="sum-val">$${subtotal.toFixed(2)}</span></div>
+    <div class="sum-row"><span class="sum-lbl">Tax (8%)</span><span class="sum-val">$${tax.toFixed(2)}</span></div>
+    <div class="divider"></div>
+    <div class="sum-row" style="margin-bottom:0"><span class="total-lbl">Total</span><span class="total-val">$${total.toFixed(2)}</span></div>
+  </div>
+  <button class="btn-primary" onclick="goTo('checkout')">Proceed to Checkout →</button>`;
+}
+
+// ═══════════════════════════════════════════════════
+// CHECKOUT
+// ═══════════════════════════════════════════════════
+function renderCheckout() {
+  const el = document.getElementById('checkout-content');
+  const items = Object.entries(cart);
+  const subtotal = cartTotal();
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+  const pickupOpts = ['15 min','30 min','45 min','1 hour'];
+  el.innerHTML = `
+    <div class="sec-label" style="margin-top:0">Order Summary</div>
+    <div class="summary-card" style="margin-bottom:4px">
+      ${items.map(([id,qty]) => { const p = PRODUCTS.find(x=>x.id===id); return p ? `<div class="sum-row"><span class="sum-lbl">${p.name} ×${qty}</span><span class="sum-val">$${(p.price*qty).toFixed(2)}</span></div>` : ''; }).join('')}
+      <div class="divider"></div>
+      <div class="sum-row" style="margin-bottom:0"><span class="total-lbl">Total</span><span class="total-val">$${total.toFixed(2)}</span></div>
+    </div>
+
+    <div class="sec-label">Estimated Pickup Time</div>
+    <div class="pickup-grid">
+      ${pickupOpts.map(t => `<button class="pickup-btn ${pickupTime===t?'selected':''}" onclick="setPickup('${t}')">${t}</button>`).join('')}
+    </div>
+
+    <div class="sec-label">Payment Method</div>
+    <div class="pay-row">
+      <div class="pay-card ${payMethod==='cash'?'selected':''}" onclick="setPayMethod('cash')">
+        <span class="pay-icon">💵</span>
+        <span class="pay-lbl">Pay at Pickup</span>
+        <span class="pay-desc">Cash when you arrive</span>
+      </div>
+      <div class="pay-card ${payMethod==='card'?'selected':''}" onclick="setPayMethod('card')">
+        <span class="pay-icon">💳</span>
+        <span class="pay-lbl">Pay Online</span>
+        <span class="pay-desc">Credit / Debit card</span>
+      </div>
+    </div>
+
+    ${payMethod === 'card' ? `
+    <div class="card-form">
+      <input class="input" type="text" id="card-name" placeholder="Cardholder Name">
+      <input class="input" type="text" id="card-num" placeholder="Card Number (16 digits)" maxlength="16" oninput="this.value=this.value.replace(/\D/g,'')">
+      <div class="card-row">
+        <input class="input" type="text" id="card-exp" placeholder="MM/YY" maxlength="5" oninput="fmtExpiry(this)" style="flex:1">
+        <input class="input" type="text" id="card-cvv" placeholder="CVV" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')" style="flex:1">
+      </div>
+    </div>` : ''}
+
+    <button class="btn-primary" style="margin-top:18px" onclick="placeOrder()">
+      Place Order · $${total.toFixed(2)}
+    </button>
+  `;
+}
+function setPayMethod(m) { payMethod = m; renderCheckout(); }
+function setPickup(t) { pickupTime = t; renderCheckout(); }
+function fmtExpiry(el) {
+  let v = el.value.replace(/\D/g,'');
+  if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2,4);
+  el.value = v;
+}
+function placeOrder() {
+  if (payMethod === 'card') {
+    const name = document.getElementById('card-name')?.value;
+    const num = document.getElementById('card-num')?.value;
+    const exp = document.getElementById('card-exp')?.value;
+    const cvv = document.getElementById('card-cvv')?.value;
+    if (!name || !num || num.length < 16 || !exp || !cvv) { alert('Please fill in all card details.'); return; }
+  }
+  const subtotal = cartTotal();
+  points += Math.floor(subtotal);
+  pointsHistory.unshift({ id: Date.now().toString(), date: new Date().toISOString().slice(0,10), desc: `Purchase — $${subtotal.toFixed(2)}`, pts: Math.floor(subtotal) });
+  cart = {};
+  updateCartBadge();
+  document.getElementById('checkout-content').innerHTML = `
+    <div class="success-center">
+      <div class="success-ring">✓</div>
+      <div style="font-family:var(--h);font-size:28px;color:var(--yellow);text-shadow:var(--glow2);margin-bottom:8px">Order Placed!</div>
+      <div style="font-family:var(--b);font-size:17px;color:var(--white);margin-bottom:8px">Estimated pickup: <span style="color:var(--yellow)">${pickupTime}</span></div>
+      <div style="font-family:var(--b);font-size:14px;color:var(--gray);margin-bottom:10px">${payMethod==='cash'?'Pay with cash when you arrive at the store.':'Payment charged to your card.'}</div>
+      <div style="font-family:var(--b);font-size:15px;color:var(--gold);margin-bottom:26px">🌟 Points earned for this purchase!</div>
+      <button class="btn-primary" style="width:auto;padding:13px 36px" onclick="goTo('home')">Back to Home</button>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════
+// REWARDS
+// ═══════════════════════════════════════════════════
+function renderRewards() {
+  const tier = getTier(points);
+  const nextTier = tier.next;
+  const progressPct = nextTier ? Math.round(((points - tier.min) / (nextTier - tier.min)) * 100) : 100;
+  const tiers = [
+    { name:'Bronze', color:'#CD7F32', icon:'🥉', min:0, max:499 },
+    { name:'Silver', color:'#C0C0C0', icon:'🥈', min:500, max:999 },
+    { name:'Gold', color:'#FFD700', icon:'🥇', min:1000, max:'∞' },
+  ];
+  document.getElementById('rewards-content').innerHTML = `
+    <div class="balance-card">
+      <div style="font-family:var(--h);font-size:10px;color:var(--gold);letter-spacing:4px">YOUR POINTS</div>
+      <div class="balance-num">${points.toLocaleString()}</div>
+      <div class="balance-sub">1 point per $1 spent · 100 pts = $1 off</div>
+    </div>
+
+    <div class="tier-card" style="border:1px solid ${tier.color}30">
+      <span class="tier-icon">${tier.icon}</span>
+      <div class="tier-info">
+        <div class="tier-name" style="color:${tier.color}">${tier.name} Member</div>
+        <div class="tier-sub">${nextTier ? `${nextTier - points} pts to ${getTier(nextTier).name}` : 'Top tier — Elite status!'}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%;background:${tier.color}"></div></div>
+      </div>
+    </div>
+
+    <div class="tiers-row">
+      ${tiers.map(t => `<div class="tier-badge" style="opacity:${tier.name===t.name?1:.3}">
+        <span style="font-size:26px">${t.icon}</span>
+        <span class="tier-badge-name" style="color:${t.color}">${t.name}</span>
+        <span class="tier-badge-range">${t.min}–${t.max}</span>
+      </div>`).join('')}
+    </div>
+
+    <div class="redeem-card">
+      <div style="font-family:var(--h);font-size:13px;color:var(--yellow);margin-bottom:4px;letter-spacing:1px">Redeem Points</div>
+      <div style="font-family:var(--b);font-size:13px;color:var(--gray);margin-bottom:12px">100 points = $1.00 off your order</div>
+      <div class="redeem-row">
+        <input class="input" type="number" id="redeem-amt" placeholder="Enter points (min 100)" style="flex:1">
+        <button class="btn-ghost" onclick="redeemPoints()">Redeem</button>
+      </div>
+      <div id="redeem-msg" style="font-family:var(--b);font-size:13px;color:var(--gold);margin-top:8px;display:none"></div>
+    </div>
+
+    <div class="sec-label">Points History</div>
+    ${pointsHistory.map(h => `
+      <div class="history-row">
+        <div>
+          <div style="font-family:var(--b);font-size:14px;color:var(--white);font-weight:600;margin-bottom:2px">${h.desc}</div>
+          <div style="font-family:var(--b);font-size:12px;color:var(--gray)">${h.date}</div>
+        </div>
+        <span style="font-family:var(--h);font-size:18px;font-weight:700;color:${h.pts<0?'var(--red)':'var(--green)'}">${h.pts>0?'+':''}${h.pts}</span>
+      </div>`).join('')}
+  `;
+}
+function redeemPoints() {
+  const amt = parseInt(document.getElementById('redeem-amt')?.value || '0', 10);
+  const msg = document.getElementById('redeem-msg');
+  msg.style.display = 'block';
+  if (isNaN(amt) || amt < 100) { msg.textContent = 'Minimum redeem is 100 points.'; msg.style.color = 'var(--red)'; return; }
+  if (amt > points) { msg.textContent = 'Not enough points.'; msg.style.color = 'var(--red)'; return; }
+  points -= amt;
+  pointsHistory.unshift({ id: Date.now().toString(), date: new Date().toISOString().slice(0,10), desc: `Redeemed ${amt} points`, pts: -amt });
+  msg.textContent = `✓ Redeemed ${amt} pts for $${(amt/100).toFixed(2)} off!`;
+  msg.style.color = 'var(--green)';
+  setTimeout(() => renderRewards(), 1200);
+}
+
+// ═══════════════════════════════════════════════════
+// ACCOUNT
+// ═══════════════════════════════════════════════════
+function renderAccount() {
+  const el = document.getElementById('account-content');
+  if (!currentUser) {
+    el.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;gap:12px">
+      <span style="font-size:64px">👤</span>
+      <div style="font-family:var(--h);font-size:20px;color:var(--white);margin-top:8px">Sign In to Your Account</div>
+      <div style="font-family:var(--b);font-size:15px;color:var(--gray)">Track orders, earn rewards, and save favorites.</div>
+      <button class="btn-primary" style="width:auto;padding:13px 36px;margin-top:10px" onclick="goTo('login')">Login / Sign Up</button>
+    </div>`;
+    return;
+  }
+  const tier = getTier(points);
+  const wishItems = PRODUCTS.filter(p => wishlist.has(p.id));
+  el.innerHTML = `
+    <div class="profile-card">
+      <div class="avatar">👤</div>
+      <div class="profile-info">
+        <div class="profile-name">${currentUser.name}</div>
+        <div class="profile-email">${currentUser.email}</div>
+        <div class="tier-pill">${tier.icon} ${tier.name} Member · ${points} pts</div>
+      </div>
+      <button class="btn-ghost" style="font-size:11px;padding:7px 12px" onclick="logoutUser()">Logout</button>
+    </div>
+
+    <div class="quick-grid">
+      <button class="quick-btn" onclick="goTo('rewards')"><span style="font-size:20px">⭐</span>Rewards</button>
+      <button class="quick-btn" onclick="goTo('cart')"><span style="font-size:20px">🛒</span>Cart</button>
+      <button class="quick-btn" onclick="goTo('prepared')"><span style="font-size:20px">🍳</span>Kitchen</button>
+      <button class="quick-btn" onclick="goTo('shop')"><span style="font-size:20px">🛍️</span>Shop</button>
+    </div>
+
+    <div class="sec-label">Order History</div>
+    ${orders.map(o => {
+      const sc = { 'Delivered':'#00FF88', 'Processing':'#FFD700', 'Ready for Pickup':'#00BFFF', 'Cancelled':'#FF4444' };
+      return `<div class="order-card">
+        <div class="order-hdr">
+          <span class="order-id">${o.id}</span>
+          <span style="font-family:var(--b);font-size:12px;font-weight:700;color:${sc[o.status]||'var(--gray)'}">${o.status}</span>
+        </div>
+        <div style="font-family:var(--b);font-size:12px;color:var(--gray);margin-bottom:5px">${o.date}</div>
+        <div style="font-family:var(--b);font-size:13px;color:var(--white);line-height:1.4">${o.items}</div>
+        <div class="order-footer">
+          <span class="order-total">$${o.total.toFixed(2)}</span>
+          <button class="btn-ghost" style="font-size:10px;padding:6px 12px" onclick="goTo('shop')">Reorder</button>
+        </div>
+      </div>`;
+    }).join('')}
+
+    <div class="sec-label">Saved Addresses</div>
+    ${['1234 Edgewood Ave NE, Atlanta, GA 30307','5678 Buford Hwy, Doraville, GA 30340'].map(a =>
+      `<div class="card-sm" style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span>📍</span><span style="font-family:var(--b);font-size:14px;color:var(--gray)">${a}</span>
+      </div>`
+    ).join('')}
+
+    ${wishItems.length > 0 ? `
+      <div class="sec-label">My Wishlist</div>
+      <div class="product-grid">${wishItems.map(p => productCardHTML(p)).join('')}</div>
+    ` : ''}
+  `;
+}
+function logoutUser() {
+  currentUser = null;
+  renderAccount();
+}
+
+// ═══════════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════════
+function setLoginMode(m) {
+  loginMode = m;
+  document.getElementById('login-toggle').classList.toggle('active', m==='login');
+  document.getElementById('signup-toggle').classList.toggle('active', m==='signup');
+  document.getElementById('signup-name-wrap').style.display = m==='signup' ? 'block' : 'none';
+  const btn = document.querySelector('#login-form button.btn-primary');
+  if (btn) btn.textContent = m==='login' ? 'Login →' : 'Create Account →';
+  document.getElementById('login-error').style.display = 'none';
+}
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  if (!email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
+  if (loginMode === 'signup') {
+    const name = document.getElementById('signup-name').value.trim();
+    if (!name) { errEl.textContent = 'Please enter your name.'; errEl.style.display = 'block'; return; }
+    currentUser = { name, email };
+  } else {
+    currentUser = { name: 'Almaz Bekele', email };
+  }
+  errEl.style.display = 'none';
+  goTo('account');
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+initHome();
+</script>
+</body>
+</html>
